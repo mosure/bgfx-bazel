@@ -1,0 +1,25 @@
+build:windows --copt="/std:c++17" --copt="/W4" --copt="/O2"
+build:linux --copt="-std=c++17" --copt="-O3"
+build:macos --copt="-std=c++17" --copt="-O3"
+
+
+build:darwin --remote_http_cache=https://bazel-cache.da-ext.net
+build:linux --remote_http_cache=https://bazel-cache.da-ext.net/ubuntu_20_04
+
+# Don't push local build results to the remote cache.
+build --remote_upload_local_results=false
+# Do still push local build results to the local disk cache.
+build --incompatible_remote_results_ignore_disk=true
+
+build:linux --disk_cache=.bazel-cache/disk
+build:darwin --disk_cache=.bazel-cache/disk
+
+build:linux --repository_cache=.bazel-cache/repo
+fetch:linux --repository_cache=.bazel-cache/repo
+sync:linux --repository_cache=.bazel-cache/repo
+build:darwin --repository_cache=.bazel-cache/repo
+fetch:darwin --repository_cache=.bazel-cache/repo
+sync:darwin --repository_cache=.bazel-cache/repo
+
+
+build --experimental_strict_action_env

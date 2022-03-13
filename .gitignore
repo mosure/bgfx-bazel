@@ -1,0 +1,4 @@
+bazel-*
+conandeps/*
+
+!conandeps/conanfile.py

@@ -1,10 +1,9 @@
-/*
- * Copyright 2011-2019 Branimir Karadzic. All rights reserved.
- * License: https://github.com/bkaradzic/bgfx#license-bsd-2-clause
- */
+#include <iostream>
 #include <stdio.h>
 #include <stddef.h>
 #include <bx/bx.h>
+#include <bx/file.h>
+#include <bx/timer.h>
 #include <bgfx/bgfx.h>
 #include <bgfx/platform.h>
 #include <GLFW/glfw3.h>
@@ -16,6 +15,8 @@
 #define GLFW_EXPOSE_NATIVE_COCOA
 #endif
 #include <GLFW/glfw3native.h>
+
+#include "common/utils.h"
 
 static bool s_showStats = false;
 
@@ -33,8 +34,67 @@ static void glfw_keyCallback(GLFWwindow *window, int key, int scancode, int acti
         glfwSetWindowShouldClose(window, GLFW_TRUE);
 }
 
+
+struct Uniforms {
+    void init() {
+        u_times = bgfx::createUniform("u_times", bgfx::UniformType::Vec4, 1);
+    }
+
+    void submit() {
+        bgfx::setUniform(u_times, m_times, 1);
+    }
+
+    void destroy()
+    {
+        bgfx::destroy(u_times);
+    }
+
+    union {
+        struct {
+            float m_delta_seconds;
+            float m_time;
+        };
+
+        float m_times[4];
+    };
+
+    bgfx::UniformHandle u_times;
+};
+
+
+struct PosVertex {
+    float x;
+    float y;
+    float z;
+
+    static void init() {
+        ms_layout.begin()
+            .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
+            .end();
+    }
+
+    static bgfx::VertexLayout ms_layout;
+};
+
+bgfx::VertexLayout PosVertex::ms_layout;
+
+static PosVertex planeVerticies[] = {
+    {-1.0f, 1.0f, 0.0f},
+    {1.0f, 1.0f, 0.0f},
+    {-1.0f, -1.0f, 0.0f},
+    {1.0f, -1.0f, 0.0f}
+};
+
+static const uint16_t planeTriList[] = {
+    0, 1, 2,
+    1, 3, 2
+};
+
+
 int main(int argc, char **argv)
 {
+    std::cout << "ARGV[0]: " << argv[0] << std::endl;
+
     // Create a GLFW window without an OpenGL context.
     glfwSetErrorCallback(glfw_errorCallback);
     if (!glfwInit())
@@ -84,18 +144,33 @@ int main(int argc, char **argv)
 
     bgfx::setDebug(BGFX_DEBUG_NONE);
 
-    // bgfx::VertexBufferHandle vbh = bgfx::createVertexBuffer(
-    //     bgfx::makeRef(s_cubeVertices, sizeof(s_cubeVertices)),
-    //     PosColorVertex::ms_layout
-    // );
 
-    // bgfx::IndexBufferHandle ibh = bgfx::createIndexBuffer(
-    //     // Static data can be passed with bgfx::makeRef
-    //     bgfx::makeRef(s_cubeTriStrip, sizeof(s_cubeTriStrip))
-    // );
+    Uniforms m_uniforms;
+    m_uniforms.init();
 
-    // bgfx::ProgramHandle program = loadProgram("vs_cubes", "fs_cubes");
 
+    uint64_t state = 0
+                | BGFX_STATE_WRITE_R
+                | BGFX_STATE_WRITE_G
+                | BGFX_STATE_WRITE_B
+                | BGFX_STATE_PT_TRISTRIP;
+
+    PosVertex::init();
+
+    bgfx::VertexBufferHandle vbh = bgfx::createVertexBuffer(
+        bgfx::makeRef(planeVerticies, sizeof(planeVerticies)),
+        PosVertex::ms_layout
+    );
+
+    bgfx::IndexBufferHandle ibh = bgfx::createIndexBuffer(
+        // Static data can be passed with bgfx::makeRef
+        bgfx::makeRef(planeTriList, sizeof(planeTriList))
+    );
+
+    bgfx::ProgramHandle program = loadProgram("vs_cubes", "fs_cubes");
+
+    static int64_t last = bx::getHPCounter();
+    static float time = 0.0f;
 
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();
@@ -109,43 +184,59 @@ int main(int argc, char **argv)
             bgfx::setViewRect(kClearView, 0, 0, bgfx::BackbufferRatio::Equal);
         }
 
+
+        {
+            int64_t now = bx::getHPCounter();
+            const int64_t frameTime = now - last;
+            last = now;
+            const double freq = double(bx::getHPFrequency() );
+            const float deltaTimeSec = float(double(frameTime)/freq);
+            time += deltaTimeSec;
+
+            m_uniforms.m_delta_seconds = deltaTimeSec;
+            m_uniforms.m_time = time;
+        }
+
+
         // This dummy draw call is here to make sure that view 0 is cleared if no other draw calls are submitted to view 0.
         bgfx::touch(kClearView);
 
         // Use debug font to print information about this example.
-        bgfx::dbgTextClear();
-        //bgfx::dbgTextImage(bx::max<uint16_t>(uint16_t(width / 2 / 8), 20) - 20, bx::max<uint16_t>(uint16_t(height / 2 / 16), 6) - 6, 40, 12, s_logo, 160);
-        bgfx::dbgTextPrintf(0, 0, 0x0f, "Press F1 to toggle stats.");
-        bgfx::dbgTextPrintf(0, 1, 0x0f, "Color can be changed with ANSI \x1b[9;me\x1b[10;ms\x1b[11;mc\x1b[12;ma\x1b[13;mp\x1b[14;me\x1b[0m code too.");
-        bgfx::dbgTextPrintf(80, 1, 0x0f, "\x1b[;0m    \x1b[;1m    \x1b[; 2m    \x1b[; 3m    \x1b[; 4m    \x1b[; 5m    \x1b[; 6m    \x1b[; 7m    \x1b[0m");
-        bgfx::dbgTextPrintf(80, 2, 0x0f, "\x1b[;8m    \x1b[;9m    \x1b[;10m    \x1b[;11m    \x1b[;12m    \x1b[;13m    \x1b[;14m    \x1b[;15m    \x1b[0m");
+        // bgfx::dbgTextClear();
+        // bgfx::dbgTextImage(bx::max<uint16_t>(uint16_t(width / 2 / 8), 20) - 20, bx::max<uint16_t>(uint16_t(height / 2 / 16), 6) - 6, 40, 12, s_logo, 160);
+        // bgfx::dbgTextPrintf(0, 0, 0x0f, "Press F1 to toggle stats.");
+        // bgfx::dbgTextPrintf(0, 1, 0x0f, "Color can be changed with ANSI \x1b[9;me\x1b[10;ms\x1b[11;mc\x1b[12;ma\x1b[13;mp\x1b[14;me\x1b[0m code too.");
+        // bgfx::dbgTextPrintf(80, 1, 0x0f, "\x1b[;0m    \x1b[;1m    \x1b[; 2m    \x1b[; 3m    \x1b[; 4m    \x1b[; 5m    \x1b[; 6m    \x1b[; 7m    \x1b[0m");
+        // bgfx::dbgTextPrintf(80, 2, 0x0f, "\x1b[;8m    \x1b[;9m    \x1b[;10m    \x1b[;11m    \x1b[;12m    \x1b[;13m    \x1b[;14m    \x1b[;15m    \x1b[0m");
 
-        const bgfx::Stats* stats = bgfx::getStats();
-        bgfx::dbgTextPrintf(0, 2, 0x0f, "Backbuffer %dW x %dH in pixels, debug text %dW x %dH in characters.", stats->width, stats->height, stats->textWidth, stats->textHeight);
+        // const bgfx::Stats* stats = bgfx::getStats();
+        // bgfx::dbgTextPrintf(0, 2, 0x0f, "Backbuffer %dW x %dH in pixels, debug text %dW x %dH in characters.", stats->width, stats->height, stats->textWidth, stats->textHeight);
 
         // Enable stats or debug text.
-        bgfx::setDebug(s_showStats ? BGFX_DEBUG_STATS : BGFX_DEBUG_TEXT);
+        bgfx::setDebug(s_showStats ? BGFX_DEBUG_STATS : BGFX_DEBUG_NONE);
 
+        {
+            m_uniforms.submit();
 
+            bgfx::setVertexBuffer(0, vbh);
+            bgfx::setIndexBuffer(ibh);
 
-        // bgfx::setVertexBuffer(0, vbh);
-        // bgfx::setIndexBuffer(ibh);
+            // Set render states.
+            bgfx::setState(state);
 
-        // // Set render states.
-        // bgfx::setState(state);
-
-        // // Submit primitive for rendering to view 0.
-        // bgfx::submit(0, program);
-
-
+            // Submit primitive for rendering to view 0.
+            bgfx::submit(0, program);
+            //bgfx::discard();
+        }
 
         // Advance to next frame. Process submitted rendering primitives.
         bgfx::frame();
     }
 
-    // bgfx::destroy(ibh);
-    // bgfx::destroy(vbh);
-    // bgfx::destroy(program);
+    //m_uniforms.destroy();
+    bgfx::destroy(ibh);
+    bgfx::destroy(vbh);
+    bgfx::destroy(program);
 
     bgfx::shutdown();
     glfwTerminate();

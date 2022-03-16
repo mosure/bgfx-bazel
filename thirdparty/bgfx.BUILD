@@ -33,5 +33,8 @@ cc_library(
         '@bimg//:bimg',
         '@bx//:bx',
     ],
+    defines = [
+        'BGFX_CONFIG_DEBUG=0',
+    ],
     visibility = ['//visibility:public'],
 )

@@ -24,7 +24,6 @@ cc_library(
         'include',
         '3rdparty',
     ],
-
     defines = [
         '__STDC_FORMAT_MACROS',
         'BX_CONFIG_DEBUG=1',

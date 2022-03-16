@@ -1,7 +1,7 @@
 # bgfx-bazel
 bgfx / imgui sample application
 
-- `bazelisk run example`
+- `./shaderc.sh && bazelisk run example`
 
 
 ## Attributions

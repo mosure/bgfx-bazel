@@ -105,7 +105,7 @@ int main(int argc, char **argv)
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
 
-    GLFWwindow *window = glfwCreateWindow(mode->width, mode->height, "helloworld", glfwGetPrimaryMonitor(), nullptr);
+    GLFWwindow *window = glfwCreateWindow(mode->width / 2, mode->height / 2, "helloworld", nullptr, nullptr);
     if (!window)
         return 1;
 

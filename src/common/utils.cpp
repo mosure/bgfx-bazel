@@ -1,3 +1,4 @@
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <memory>
@@ -17,8 +18,20 @@ static std::vector<std::shared_ptr<char[]>> loadedFiles;
 
 static const bgfx::Memory* loadFile(const char* _filePath)
 {
-    std::ifstream is (_filePath, std::ios::binary);
+    auto filePath = std::filesystem::path(_filePath);
 
+    if (filePath.is_relative()) {
+        filePath = std::filesystem::current_path() / filePath;
+        std::cout << _filePath << " is relative, actual path: " << filePath << std::endl;
+    }
+
+    if (std::filesystem::is_symlink(filePath))
+    {
+        filePath = std::filesystem::read_symlink(filePath);
+        std::cout << _filePath << " is a symlink, actual path: " << filePath << std::endl;
+    }
+
+    std::ifstream is (filePath, std::ios::binary);
     if (!is) {
         std::cout << "Invalid filepath: " << _filePath << std::endl;
         return NULL;
@@ -45,23 +58,23 @@ bgfx::ShaderHandle loadShader(const char* _name)
     switch (bgfx::getRendererType() )
     {
     case bgfx::RendererType::Noop:
-    case bgfx::RendererType::Direct3D9:  shaderPath = "resources/shaders/dx9/";   break;
+    case bgfx::RendererType::Direct3D9:  shaderPath = "shaders/dx9/";   break;
     case bgfx::RendererType::Direct3D11:
-    case bgfx::RendererType::Direct3D12: shaderPath = "resources/shaders/dx11/";  break;
-    case bgfx::RendererType::Gnm:        shaderPath = "resources/shaders/pssl/";  break;
-    case bgfx::RendererType::Metal:      shaderPath = "resources/shaders/metal/"; break;
-    case bgfx::RendererType::Nvn:        shaderPath = "resources/shaders/nvn/";   break;
-    case bgfx::RendererType::OpenGL:     shaderPath = "resources/shaders/glsl/";  break;
-    case bgfx::RendererType::OpenGLES:   shaderPath = "resources/shaders/essl/";  break;
-    case bgfx::RendererType::Vulkan:     shaderPath = "resources/shaders/spirv/"; break;
-    case bgfx::RendererType::WebGPU:     shaderPath = "resources/shaders/spirv/"; break;
+    case bgfx::RendererType::Direct3D12: shaderPath = "shaders/dx11/";  break;
+    case bgfx::RendererType::Gnm:        shaderPath = "shaders/pssl/";  break;
+    case bgfx::RendererType::Metal:      shaderPath = "shaders/metal/"; break;
+    case bgfx::RendererType::Nvn:        shaderPath = "shaders/nvn/";   break;
+    case bgfx::RendererType::OpenGL:     shaderPath = "shaders/glsl/";  break;
+    case bgfx::RendererType::OpenGLES:   shaderPath = "shaders/essl/";  break;
+    case bgfx::RendererType::Vulkan:     shaderPath = "shaders/spirv/"; break;
+    case bgfx::RendererType::WebGPU:     shaderPath = "shaders/spirv/"; break;
 
     case bgfx::RendererType::Count:
         BX_ASSERT(false, "You should not be here!");
         break;
     }
 
-    bx::strCopy(filePath, BX_COUNTOF(filePath), "/home/mosure/repos/bgfx-bazel/");
+    bx::strCopy(filePath, BX_COUNTOF(filePath), "../../../../../resources/");
     bx::strCat(filePath, BX_COUNTOF(filePath), shaderPath);
     bx::strCat(filePath, BX_COUNTOF(filePath), _name);
     bx::strCat(filePath, BX_COUNTOF(filePath), ".bin");

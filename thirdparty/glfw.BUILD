@@ -1,11 +1,26 @@
-load('@rules_cc//cc:defs.bzl', 'cc_library')
+load('@rules_cc//cc:defs.bzl', 'cc_library', 'objc_library')
 
 
-config_setting(
-    name = 'is_osx',
-    values = {'cpu': 'darwin_x86_64'},
+objc_library(
+    name = 'glfw-objc',
+    non_arc_srcs = glob([
+        'src/*.m',
+    ]),
+    hdrs = glob([
+        'include/GLFW/*.h',
+        'src/egl_context.h',
+        'src/internal.h',
+        'src/mappings.h',
+        'src/osmesa_context.h',
+        'src/nsgl_context.h',
+        'src/cocoa_*.h',
+        'src/posix_thread.h',
+    ]),
+    includes = [
+        'include',
+    ],
+    defines = ['_GLFW_COCOA'],
 )
-
 
 cc_library(
     name = 'glfw',
@@ -19,7 +34,10 @@ cc_library(
         'src/vulkan.c',
         'src/window.c',
     ]) + select({
-        ':is_osx': [],
+        '@bazel_tools//src/conditions:darwin': glob([
+            'src/cocoa_*.c',
+            'src/posix_thread.c',
+        ]),
         '//conditions:default': glob([
             'src/glx_context.c',
             'src/linux*.c',
@@ -35,7 +53,10 @@ cc_library(
         'src/mappings.h',
         'src/osmesa_context.h',
     ]) + select({
-        ':is_osx': [],
+        '@bazel_tools//src/conditions:darwin': glob([
+            'src/cocoa_*.h',
+            'src/posix_thread.h',
+        ]),
         '//conditions:default': glob([
             'src/glx_context.h',
             'src/linux*.h',
@@ -48,8 +69,12 @@ cc_library(
         'include',
     ],
     defines = []  + select({
-        ':is_osx': [],
+        '@bazel_tools//src/conditions:darwin': ['_GLFW_COCOA'],
         '//conditions:default': ['_GLFW_X11'],
+    }),
+    deps = select({
+        '@bazel_tools//src/conditions:darwin': [':glfw-objc'],
+        '//conditions:default': [],
     }),
     visibility = ['//visibility:public'],
 )

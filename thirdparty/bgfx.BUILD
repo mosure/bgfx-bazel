@@ -54,9 +54,6 @@ cc_library(
         '@bazel_tools//src/conditions:darwin': [':bgfx-objc'],
         '//conditions:default': [],
     }),
-    defines = [
-        'BX_CONFIG_DEBUG=0',
-    ],
     copts = select({
         '@bazel_tools//src/conditions:darwin': [
             '-xobjective-c++',

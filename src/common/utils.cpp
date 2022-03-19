@@ -18,19 +18,15 @@ static std::vector<std::shared_ptr<char[]>> loadedFiles;
 
 static const bgfx::Memory* loadFile(const std::string& _filePath)
 {
-    std::cout << "Loading " << _filePath << std::endl;
-
     auto filePath = std::filesystem::path(_filePath);
 
     if (filePath.is_relative()) {
         filePath = std::filesystem::current_path() / filePath;
-        std::cout << _filePath << " is relative, actual path: " << filePath << std::endl;
     }
 
     if (std::filesystem::is_symlink(filePath))
     {
         filePath = std::filesystem::read_symlink(filePath);
-        std::cout << _filePath << " is a symlink, actual path: " << filePath << std::endl;
     }
 
     std::ifstream is (filePath, std::ios::binary);
@@ -68,7 +64,7 @@ bgfx::ShaderHandle loadShader(const std::string& _name)
     case bgfx::RendererType::OpenGLES:   shaderPath = "shaders/essl/";  break;
     case bgfx::RendererType::Vulkan:     shaderPath = "shaders/spirv/"; break;
     case bgfx::RendererType::WebGPU:     shaderPath = "shaders/spirv/"; break;
-
+    case bgfx::RendererType::Agc:
     case bgfx::RendererType::Count:
         BX_ASSERT(false, "You should not be here!");
         break;

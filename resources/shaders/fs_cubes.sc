@@ -4,19 +4,73 @@ uniform vec4 u_times;
 #define u_delta_seconds u_times.x
 #define u_time u_times.y
 
-
+//float circle(in vec2 _st, in float _radius){
+//    vec2 l = _st-vec2(0.5);
+//    return 1.-smoothstep(_radius-(_radius*0.01),
+//                         _radius+(_radius*0.01),
+//                         dot(l,l)*4.0);
+//}
+//
 mat2 rotate2d(float _angle){
     return mat2(cos(_angle),-sin(_angle),
                 sin(_angle),cos(_angle));
 }
+//
+//void main()
+//{
+//    vec2 st = gl_FragCoord.xy * u_viewTexel.xy;
+//    vec3 color = vec3(0.0);
+//
+//    st *= 3.0;      // Scale up the space by 3
+//    st = fract(st); // Wrap around 1.0
+//
+//    color = vec3(st,0.0);
+//    color = vec3(circle(st,0.5));
+//
+//	gl_FragColor = vec4(color,1.0);
+//
+//}
 
-void main()
-{
+
+const float PI = 3.1415926535897932384626433832795;
+
+vec2 movingTiles(vec2 _st, float _zoom, float _speed){
+    _st *= _zoom;
+    float time = u_time*_speed;
+    if( fract(time)>0.5 ){
+        if (fract( _st.y * 0.5) > 0.5){
+            _st.x += fract(time)*2.0;
+        } else {
+            _st.x -= fract(time)*2.0;
+        }
+    } else {
+        if (fract( _st.x * 0.5) > 0.5){
+            _st.y += fract(time)*2.0;
+        } else {
+            _st.y -= fract(time)*2.0;
+        }
+    }
+    return fract(_st);
+}
+
+float circle(vec2 _st, float _radius){
+    vec2 pos = vec2(0.5)-_st;
+    return smoothstep(1.0-_radius,1.0-_radius+_radius*0.2,1.-dot(pos,pos)*3.14);
+}
+
+void main() {
     vec2 st = gl_FragCoord.xy * u_viewTexel.xy;
+    st.x *= u_viewTexel.y / u_viewTexel.x;
 
     st -= vec2(0.5);
-    st = mul(st, rotate2d(u_time));
+    st = mul(st, rotate2d(u_time / 10.0));
     st += vec2(0.5);
 
-    gl_FragColor = vec4(st.x, st.y, abs(sin(u_time)), 1.0);
+    st = movingTiles(st, 15.0, 0.5);
+
+    float circle_mask = circle(st, 0.3);
+
+    vec3 color = vec3(circle_mask * st.x, 1.0 - circle_mask, abs(sin(u_time)));
+
+    gl_FragColor = vec4(color, 1.0);
 }

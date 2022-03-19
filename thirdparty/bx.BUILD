@@ -42,7 +42,7 @@ cc_library(
     }),
     defines = [
         '__STDC_FORMAT_MACROS',
-        'BX_CONFIG_DEBUG=1',
+        'BX_CONFIG_DEBUG=0',
     ],
     copts = [
         '-std=c++17',

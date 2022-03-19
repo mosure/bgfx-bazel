@@ -16,6 +16,7 @@ new_git_repository(
     remote = 'https://github.com/bkaradzic/bx.git',
     build_file = '@//:thirdparty/bx.BUILD',
     commit = 'ad018d47c6c107e2fe2f3ba0716f9e728ed59a39',
+    shallow_since = '1644116923 -0800',
 )
 
 new_git_repository(
@@ -30,6 +31,7 @@ new_git_repository(
     remote = 'https://github.com/bkaradzic/bgfx.git',
     build_file = '@//:thirdparty/bgfx.BUILD',
     commit = '6a1809baa2ff1cb740db73cf23ad9df390a40ea3',
+    shallow_since = '1647273539 -0700',
 )
 
 new_git_repository(

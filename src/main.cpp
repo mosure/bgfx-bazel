@@ -1,6 +1,8 @@
 #include <iostream>
 #include <stdio.h>
 #include <stddef.h>
+#include <string.h>
+
 #include <bx/bx.h>
 #include <bx/file.h>
 #include <bx/timer.h>
@@ -93,7 +95,11 @@ static const uint16_t planeTriList[] = {
 
 int main(int argc, char **argv)
 {
-    std::cout << "ARGV[0]: " << argv[0] << std::endl;
+    bool fullscreen = false;
+    if (argc == 2) {
+        if (strcmp(argv[1], "--fullscreen") == 0)
+            fullscreen = true;
+    }
 
     // Create a GLFW window without an OpenGL context.
     glfwSetErrorCallback(glfw_errorCallback);
@@ -105,7 +111,8 @@ int main(int argc, char **argv)
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
 
-    GLFWwindow *window = glfwCreateWindow(mode->width / 2, mode->height / 2, "helloworld", nullptr, nullptr);
+    int div_scale = fullscreen ? 1 : 2;
+    GLFWwindow *window = glfwCreateWindow(mode->width / div_scale, mode->height / div_scale, "helloworld", fullscreen ? glfwGetPrimaryMonitor() : nullptr, nullptr);
     if (!window)
         return 1;
 
@@ -199,7 +206,7 @@ int main(int argc, char **argv)
 
 
         // This dummy draw call is here to make sure that view 0 is cleared if no other draw calls are submitted to view 0.
-        bgfx::touch(kClearView);
+        //bgfx::touch(kClearView);
 
         // Use debug font to print information about this example.
         // bgfx::dbgTextClear();
@@ -233,7 +240,7 @@ int main(int argc, char **argv)
         bgfx::frame();
     }
 
-    //m_uniforms.destroy();
+    m_uniforms.destroy();
     bgfx::destroy(ibh);
     bgfx::destroy(vbh);
     bgfx::destroy(program);

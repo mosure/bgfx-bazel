@@ -42,6 +42,7 @@ cc_binary(
             '-lGL',
             '-lpthread',
             '-lX11',
+            '-lstdc++fs',
         ],
     }),
 )

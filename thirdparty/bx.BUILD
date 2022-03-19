@@ -44,5 +44,8 @@ cc_library(
         '__STDC_FORMAT_MACROS',
         'BX_CONFIG_DEBUG=1',
     ],
+    copts = [
+        '-std=c++17',
+    ],
     visibility = ['//visibility:public'],
 )

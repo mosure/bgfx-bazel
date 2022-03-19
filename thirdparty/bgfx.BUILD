@@ -55,7 +55,7 @@ cc_library(
         '//conditions:default': [],
     }),
     defines = [
-        'BGFX_CONFIG_DEBUG=0',
+        'BX_CONFIG_DEBUG=0',
     ],
     copts = select({
         '@bazel_tools//src/conditions:darwin': [

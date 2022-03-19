@@ -15,21 +15,21 @@ new_git_repository(
     name = 'bx',
     remote = 'https://github.com/bkaradzic/bx.git',
     build_file = '@//:thirdparty/bx.BUILD',
-    commit = '7837d90865b391fd45698add941082823f5a83a6',
+    commit = 'ad018d47c6c107e2fe2f3ba0716f9e728ed59a39',
 )
 
 new_git_repository(
     name = 'bimg',
     remote = 'https://github.com/bkaradzic/bimg.git',
     build_file = '@//:thirdparty/bimg.BUILD',
-    commit = 'bf830a85f5fc0e615aad445dbd7985031a6e754e',
+    commit = '663f724186e26caf46494e389ed82409106205fb',
 )
 
 new_git_repository(
     name = 'bgfx',
     remote = 'https://github.com/bkaradzic/bgfx.git',
     build_file = '@//:thirdparty/bgfx.BUILD',
-    commit = 'e2eb3d56e6c43db6c531194d72e344817e6c4fb0',
+    commit = '6a1809baa2ff1cb740db73cf23ad9df390a40ea3',
 )
 
 new_git_repository(

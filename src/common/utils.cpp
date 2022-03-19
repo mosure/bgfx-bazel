@@ -16,8 +16,10 @@
 
 static std::vector<std::shared_ptr<char[]>> loadedFiles;
 
-static const bgfx::Memory* loadFile(const char* _filePath)
+static const bgfx::Memory* loadFile(const std::string& _filePath)
 {
+    std::cout << "Loading " << _filePath << std::endl;
+
     auto filePath = std::filesystem::path(_filePath);
 
     if (filePath.is_relative()) {
@@ -49,11 +51,9 @@ static const bgfx::Memory* loadFile(const char* _filePath)
     return bgfx::makeRef(buffer.get(), size);
 }
 
-bgfx::ShaderHandle loadShader(const char* _name)
+bgfx::ShaderHandle loadShader(const std::string& _name)
 {
-    char filePath[512];
-
-    const char* shaderPath = "???";
+    std::string shaderPath = "???";
 
     switch (bgfx::getRendererType() )
     {
@@ -74,22 +74,19 @@ bgfx::ShaderHandle loadShader(const char* _name)
         break;
     }
 
-    bx::strCopy(filePath, BX_COUNTOF(filePath), "../../../../../resources/");
-    bx::strCat(filePath, BX_COUNTOF(filePath), shaderPath);
-    bx::strCat(filePath, BX_COUNTOF(filePath), _name);
-    bx::strCat(filePath, BX_COUNTOF(filePath), ".bin");
+    std::string filepath = "../../../../../resources/" + shaderPath + _name + ".bin";
 
-    bgfx::ShaderHandle handle = bgfx::createShader(loadFile(filePath));
-    bgfx::setName(handle, _name);
+    bgfx::ShaderHandle handle = bgfx::createShader(loadFile(filepath));
+    bgfx::setName(handle, _name.c_str());
 
     return handle;
 }
 
-bgfx::ProgramHandle loadProgram(const char* _vsName, const char* _fsName)
+bgfx::ProgramHandle loadProgram(const std::string& _vsName, const std::string& _fsName)
 {
     bgfx::ShaderHandle vsh = loadShader(_vsName);
     bgfx::ShaderHandle fsh = BGFX_INVALID_HANDLE;
-    if (NULL != _fsName)
+    if (!_fsName.empty())
     {
         fsh = loadShader(_fsName);
     }

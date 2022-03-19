@@ -132,7 +132,7 @@ int main(int argc, char **argv)
 
     init.resolution.width = (uint32_t)width;
     init.resolution.height = (uint32_t)height;
-    init.resolution.reset = BGFX_RESET_VSYNC;
+    init.resolution.reset = BGFX_RESET_MSAA_X16 | BGFX_RESET_VSYNC; // BGFX_RESET_NONE, BGFX_RESET_MSAA_X16, BGFX_RESET_VSYNC
 
     if (!bgfx::init(init))
         return 1;

@@ -22,6 +22,7 @@ cc_binary(
     ],
     deps = [
         ':resources',
+        '@argparse//:argparse',
         '@bgfx//:bgfx',
         '@glfw//:glfw',
     ],

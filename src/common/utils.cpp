@@ -54,16 +54,16 @@ bgfx::ShaderHandle loadShader(const std::string& _name)
     switch (bgfx::getRendererType() )
     {
     case bgfx::RendererType::Noop:
-    case bgfx::RendererType::Direct3D9:  shaderPath = "shaders/dx9/";   break;
+    case bgfx::RendererType::Direct3D9:  shaderPath = "shaders/bin/dx9/";   break;
     case bgfx::RendererType::Direct3D11:
-    case bgfx::RendererType::Direct3D12: shaderPath = "shaders/dx11/";  break;
-    case bgfx::RendererType::Gnm:        shaderPath = "shaders/pssl/";  break;
-    case bgfx::RendererType::Metal:      shaderPath = "shaders/metal/"; break;
-    case bgfx::RendererType::Nvn:        shaderPath = "shaders/nvn/";   break;
-    case bgfx::RendererType::OpenGL:     shaderPath = "shaders/glsl/";  break;
-    case bgfx::RendererType::OpenGLES:   shaderPath = "shaders/essl/";  break;
-    case bgfx::RendererType::Vulkan:     shaderPath = "shaders/spirv/"; break;
-    case bgfx::RendererType::WebGPU:     shaderPath = "shaders/spirv/"; break;
+    case bgfx::RendererType::Direct3D12: shaderPath = "shaders/bin/dx11/";  break;
+    case bgfx::RendererType::Gnm:        shaderPath = "shaders/bin/pssl/";  break;
+    case bgfx::RendererType::Metal:      shaderPath = "shaders/bin/metal/"; break;
+    case bgfx::RendererType::Nvn:        shaderPath = "shaders/bin/nvn/";   break;
+    case bgfx::RendererType::OpenGL:     shaderPath = "shaders/bin/glsl/";  break;
+    case bgfx::RendererType::OpenGLES:   shaderPath = "shaders/bin/essl/";  break;
+    case bgfx::RendererType::Vulkan:     shaderPath = "shaders/bin/spirv/"; break;
+    case bgfx::RendererType::WebGPU:     shaderPath = "shaders/bin/spirv/"; break;
     case bgfx::RendererType::Agc:
     case bgfx::RendererType::Count:
         BX_ASSERT(false, "You should not be here!");

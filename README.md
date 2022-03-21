@@ -1,8 +1,8 @@
 # bgfx-bazel
 bgfx / imgui sample application
 
-- `./shaderc.sh && bazelisk run example`
-- `./shaderc.sh && bazelisk run example -- --fullscreen`
+- `python shaderc.py && bazelisk run example`
+- `python shaderc.py && bazelisk run example -- --fullscreen`
 
 > Press F1 for render debug stats
 

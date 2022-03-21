@@ -12,6 +12,14 @@ git_repository(
 
 
 new_git_repository(
+    name = 'argparse',
+    remote = 'https://github.com/p-ranav/argparse.git',
+    build_file = '@//:thirdparty/argparse.BUILD',
+    commit = 'c20621489d425145a6327715d7e3411a04f920a3',
+)
+
+
+new_git_repository(
     name = 'bx',
     remote = 'https://github.com/bkaradzic/bx.git',
     build_file = '@//:thirdparty/bx.BUILD',

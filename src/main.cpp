@@ -3,6 +3,8 @@
 #include <stddef.h>
 #include <string.h>
 
+#include <argparse/argparse.hpp>
+
 #include <bx/bx.h>
 #include <bx/file.h>
 #include <bx/timer.h>
@@ -19,6 +21,7 @@
 #include <GLFW/glfw3native.h>
 
 #include "common/utils.h"
+
 
 static bool s_showStats = false;
 
@@ -80,6 +83,7 @@ struct PosVertex {
 
 bgfx::VertexLayout PosVertex::ms_layout;
 
+
 static PosVertex planeVerticies[] = {
     {-1.0f, 1.0f, 0.0f},
     {1.0f, 1.0f, 0.0f},
@@ -96,10 +100,30 @@ static const uint16_t planeTriList[] = {
 int main(int argc, char **argv)
 {
     bool fullscreen = false;
-    if (argc == 2) {
-        if (strcmp(argv[1], "--fullscreen") == 0)
-            fullscreen = true;
+    std::string program_name = "cubes";
+
+    argparse::ArgumentParser args_program("example");
+    args_program.add_argument("-f", "--fullscreen")
+        .help("whether or not to run in fullscreen")
+        .default_value(false)
+        .implicit_value(true);
+
+    args_program.add_argument("-p", "--program")
+        .default_value(std::string("cubes"))
+        .help("name of program to run");
+
+    try {
+        args_program.parse_args(argc, argv);
     }
+    catch (const std::runtime_error& err) {
+        std::cerr << err.what() << std::endl;
+        std::cerr << args_program;
+        std::exit(1);
+    }
+
+    fullscreen = args_program.get<bool>("--fullscreen");
+    program_name = args_program.get<std::string>("--program");
+
 
     // Create a GLFW window without an OpenGL context.
     glfwSetErrorCallback(glfw_errorCallback);
@@ -174,7 +198,7 @@ int main(int argc, char **argv)
         bgfx::makeRef(planeTriList, sizeof(planeTriList))
     );
 
-    bgfx::ProgramHandle program = loadProgram("vs_cubes", "fs_cubes");
+    bgfx::ProgramHandle program = loadProgram("vs_" + program_name, "fs_" + program_name);
 
     static int64_t last = bx::getHPCounter();
     static float time = 0.0f;

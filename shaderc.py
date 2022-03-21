@@ -15,7 +15,7 @@ shader_params = [
 
 
 for shader_type in ('f', 'v'):
-    for shader in Path(shader_src_dir).rglob(f'{shader_type}s_*'):
+    for shader in Path(shader_src_dir).rglob(f'*.{shader_type}s.sc'):
         for render_type_dir, platform, render_type in shader_params:
             outdir = f'{shader_bin_dir}/{render_type_dir}'
 

@@ -102,7 +102,7 @@ int main(int argc, char **argv)
     bool fullscreen = false;
     std::string program_name = "cubes";
 
-    argparse::ArgumentParser args_program("example");
+    argparse::ArgumentParser args_program("example", "1.0.0");
     args_program.add_argument("-f", "--fullscreen")
         .help("whether or not to run in fullscreen")
         .default_value(false)
@@ -198,7 +198,7 @@ int main(int argc, char **argv)
         bgfx::makeRef(planeTriList, sizeof(planeTriList))
     );
 
-    bgfx::ProgramHandle program = loadProgram("vs_" + program_name, "fs_" + program_name);
+    bgfx::ProgramHandle program = loadProgram(program_name + ".vs", program_name + ".fs");
 
     static int64_t last = bx::getHPCounter();
     static float time = 0.0f;

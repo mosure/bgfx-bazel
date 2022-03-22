@@ -176,6 +176,10 @@ int main(int argc, char **argv)
     bgfx::setDebug(BGFX_DEBUG_NONE);
 
 
+    bgfx::TextureHandle m_texture_logo = loadTexture("logo-static", BGFX_SAMPLER_U_CLAMP | BGFX_SAMPLER_V_CLAMP);
+    bgfx::UniformHandle s_logo = bgfx::createUniform("s_logo",  bgfx::UniformType::Sampler);
+
+
     Uniforms m_uniforms;
     m_uniforms.init();
 
@@ -247,6 +251,7 @@ int main(int argc, char **argv)
         bgfx::setDebug(s_showStats ? BGFX_DEBUG_STATS : BGFX_DEBUG_NONE);
 
         {
+            bgfx::setTexture(0, s_logo,  m_texture_logo);
             m_uniforms.submit();
 
             bgfx::setVertexBuffer(0, vbh);
@@ -263,6 +268,9 @@ int main(int argc, char **argv)
         // Advance to next frame. Process submitted rendering primitives.
         bgfx::frame();
     }
+
+    bgfx::destroy(s_logo);
+    bgfx::destroy(m_texture_logo);
 
     m_uniforms.destroy();
     bgfx::destroy(ibh);

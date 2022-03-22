@@ -13,6 +13,8 @@ shader_params = [
     ('dx11', 'windows', '420'),
 ]
 
+print('\nshaders:')
+print('=' * 100)
 
 for shader_type in ('f', 'v'):
     for shader in Path(shader_src_dir).rglob(f'*.{shader_type}s.sc'):
@@ -26,3 +28,26 @@ for shader_type in ('f', 'v'):
 
             command = f'{shaderc} -f {shader} -o {outpath} --type {shader_type} --platform {platform} -p {render_type} -i bazel-bgfx-bazel/external/bgfx/src --varyingdef ./resources/shaders/varying.def.sc'
             os.system(command)
+
+
+
+
+
+texturec = './bin/texturec'
+texture_src_dir = './resources/textures/src/'
+texture_bin_dir = './resources/textures/bin'
+
+if os.path.exists(texturec):
+    print('\ntextures:')
+    print('=' * 100)
+
+    for texture in Path(texture_src_dir).rglob(f'*.png'):
+        outdir = f'{texture_bin_dir}'
+
+        Path(outdir).mkdir(parents=True, exist_ok=True)
+
+        outpath = f'{outdir}/{texture.stem}.dds'
+        print(outpath)
+
+        command = f'{texturec} -f {texture} -o {outpath}'
+        os.system(command)

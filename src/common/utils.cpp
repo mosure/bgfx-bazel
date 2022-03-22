@@ -47,6 +47,12 @@ static const bgfx::Memory* loadFile(const std::string& _filePath)
     return bgfx::makeRef(buffer.get(), size);
 }
 
+static const std::string getFilepath(const std::string& _from_resources) {
+    std::string filepath = "../../../../../resources/" + _from_resources;
+
+    return filepath;
+}
+
 bgfx::ShaderHandle loadShader(const std::string& _name)
 {
     std::string shaderPath = "???";
@@ -70,7 +76,7 @@ bgfx::ShaderHandle loadShader(const std::string& _name)
         break;
     }
 
-    std::string filepath = "../../../../../resources/" + shaderPath + _name + ".bin";
+    std::string filepath = getFilepath(shaderPath + _name + ".bin");
 
     bgfx::ShaderHandle handle = bgfx::createShader(loadFile(filepath));
     bgfx::setName(handle, _name.c_str());
@@ -88,4 +94,17 @@ bgfx::ProgramHandle loadProgram(const std::string& _vsName, const std::string& _
     }
 
     return bgfx::createProgram(vsh, fsh, true /* destroy shaders when program is destroyed */);
+}
+
+bgfx::TextureHandle loadTexture(const std::string& _name, uint64_t _flags, uint8_t _skip, bgfx::TextureInfo* _info, bimg::Orientation::Enum* _orientation)
+{
+    std::string filepath = getFilepath("textures/bin/" + _name + ".dds");
+
+    auto data_mem = loadFile(filepath);
+    return bgfx::createTexture(
+        data_mem,
+        _flags,
+        _skip,
+        _info
+    );
 }

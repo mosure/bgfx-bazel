@@ -176,7 +176,7 @@ int main(int argc, char **argv)
     bgfx::setDebug(BGFX_DEBUG_NONE);
 
 
-    bgfx::TextureHandle m_texture_logo = loadTexture("logo-static", BGFX_SAMPLER_U_CLAMP | BGFX_SAMPLER_V_CLAMP);
+    bgfx::TextureHandle m_texture_logo = loadTexture("logo-static");
     bgfx::UniformHandle s_logo = bgfx::createUniform("s_logo",  bgfx::UniformType::Sampler);
 
 

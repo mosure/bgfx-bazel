@@ -19,9 +19,6 @@ void main()
 
     st = (st - 0.5) * 2 + 0.5;
 
-    //st *= 10.0;              // Scale up the space by 3
-    //st = fract(st);         // Wrap around 1.0
-
     vec4 logo = texture2D(s_logo, st);
 
     vec3 background = vec3(0.133, 0.149, 0.161);

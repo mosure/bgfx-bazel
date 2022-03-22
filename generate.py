@@ -1,8 +1,15 @@
 import os
 from pathlib import Path
+import platform
 
 
-shaderc = './bin/shaderc'
+system = platform.system()
+
+shaderc = {
+    'Windows': 'tools/windows/shaderc',
+    'Linux': 'tools/unix/shaderc',
+    'Darwin': 'tools/darwin/shaderc',
+}[system]
 shader_src_dir = './resources/shaders/src/'
 shader_bin_dir = './resources/shaders/bin'
 
@@ -33,7 +40,11 @@ for shader_type in ('f', 'v'):
 
 
 
-texturec = './bin/texturec'
+texturec = {
+    'Windows': 'tools/windows/texturec',
+    'Linux': 'tools/unix/texturec',
+    'Darwin': 'tools/darwin/texturec',
+}[system]
 texture_src_dir = './resources/textures/src/'
 texture_bin_dir = './resources/textures/bin'
 

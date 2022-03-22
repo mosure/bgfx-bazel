@@ -179,6 +179,12 @@ int main(int argc, char **argv)
     bgfx::TextureHandle m_texture_logo = loadTexture("logo-static");
     bgfx::UniformHandle s_logo = bgfx::createUniform("s_logo",  bgfx::UniformType::Sampler);
 
+    bgfx::TextureHandle m_texture_dog = loadTexture("dog");
+    bgfx::UniformHandle s_dog = bgfx::createUniform("s_dog",  bgfx::UniformType::Sampler);
+
+    bgfx::TextureHandle m_texture_dog_mask = loadTexture("dog_mask");
+    bgfx::UniformHandle s_dog_mask = bgfx::createUniform("s_dog_mask",  bgfx::UniformType::Sampler);
+
 
     Uniforms m_uniforms;
     m_uniforms.init();
@@ -252,6 +258,9 @@ int main(int argc, char **argv)
 
         {
             bgfx::setTexture(0, s_logo,  m_texture_logo);
+            bgfx::setTexture(1, s_dog,  m_texture_dog);
+            bgfx::setTexture(2, s_dog_mask,  m_texture_dog_mask);
+
             m_uniforms.submit();
 
             bgfx::setVertexBuffer(0, vbh);
@@ -271,6 +280,12 @@ int main(int argc, char **argv)
 
     bgfx::destroy(s_logo);
     bgfx::destroy(m_texture_logo);
+
+    bgfx::destroy(s_dog);
+    bgfx::destroy(m_texture_dog);
+
+    bgfx::destroy(s_dog_mask);
+    bgfx::destroy(m_texture_dog_mask);
 
     m_uniforms.destroy();
     bgfx::destroy(ibh);

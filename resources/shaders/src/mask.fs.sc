@@ -1,8 +1,8 @@
 #include <bgfx_shader.sh>
 
 
-SAMPLER2D(s_dog, 1);
-SAMPLER2D(s_dog_mask, 2);
+SAMPLER2D(s_dog, 0);
+SAMPLER2D(s_dog_mask, 1);
 
 uniform vec4 u_times;
 #define u_delta_seconds u_times.x

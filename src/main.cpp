@@ -1,4 +1,5 @@
 #include <iostream>
+#include <memory>
 #include <stdio.h>
 #include <stddef.h>
 #include <string.h>
@@ -20,7 +21,7 @@
 #endif
 #include <GLFW/glfw3native.h>
 
-#include "common/utils.h"
+#include "common/program.h"
 
 
 static bool s_showStats = false;
@@ -67,34 +68,26 @@ struct Uniforms {
 };
 
 
-struct PosVertex {
-    float x;
-    float y;
-    float z;
-
-    static void init() {
-        ms_layout.begin()
-            .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
-            .end();
+static std::unique_ptr<example::Program> get_program(const std::string& program_name) {
+    if (program_name == "basic") {
+        return std::make_unique<example::Program2d>("basic");
+    } else if (program_name == "cubes") {
+        return std::make_unique<example::Program2d>("cubes");
+    } else if (program_name == "logo") {
+        return std::make_unique<example::TextureProgram2d>(
+            "logo",
+            std::initializer_list<std::string>({ "s_logo" })
+        );
+    } else if (program_name == "mask") {
+        return std::make_unique<example::TextureProgram2d>(
+            "mask",
+            std::initializer_list<std::string>({ "s_dog", "s_dog_mask" })
+        );
+    } else {
+        throw std::runtime_error("Unknown program name: " + program_name);
     }
+}
 
-    static bgfx::VertexLayout ms_layout;
-};
-
-bgfx::VertexLayout PosVertex::ms_layout;
-
-
-static PosVertex planeVerticies[] = {
-    {-1.0f, 1.0f, 0.0f},
-    {1.0f, 1.0f, 0.0f},
-    {-1.0f, -1.0f, 0.0f},
-    {1.0f, -1.0f, 0.0f}
-};
-
-static const uint16_t planeTriList[] = {
-    0, 1, 2,
-    1, 3, 2
-};
 
 
 int main(int argc, char **argv)
@@ -176,39 +169,14 @@ int main(int argc, char **argv)
     bgfx::setDebug(BGFX_DEBUG_NONE);
 
 
-    bgfx::TextureHandle m_texture_logo = loadTexture("logo-static");
-    bgfx::UniformHandle s_logo = bgfx::createUniform("s_logo",  bgfx::UniformType::Sampler);
-
-    bgfx::TextureHandle m_texture_dog = loadTexture("dog");
-    bgfx::UniformHandle s_dog = bgfx::createUniform("s_dog",  bgfx::UniformType::Sampler);
-
-    bgfx::TextureHandle m_texture_dog_mask = loadTexture("dog_mask");
-    bgfx::UniformHandle s_dog_mask = bgfx::createUniform("s_dog_mask",  bgfx::UniformType::Sampler);
-
-
     Uniforms m_uniforms;
     m_uniforms.init();
 
+    example::PosVertex::init();
 
-    uint64_t state = 0
-                | BGFX_STATE_WRITE_R
-                | BGFX_STATE_WRITE_G
-                | BGFX_STATE_WRITE_B
-                | BGFX_STATE_PT_TRISTRIP;
 
-    PosVertex::init();
+    std::unique_ptr<example::Program> active_program = get_program(program_name);
 
-    bgfx::VertexBufferHandle vbh = bgfx::createVertexBuffer(
-        bgfx::makeRef(planeVerticies, sizeof(planeVerticies)),
-        PosVertex::ms_layout
-    );
-
-    bgfx::IndexBufferHandle ibh = bgfx::createIndexBuffer(
-        // Static data can be passed with bgfx::makeRef
-        bgfx::makeRef(planeTriList, sizeof(planeTriList))
-    );
-
-    bgfx::ProgramHandle program = loadProgram(program_name + ".vs", program_name + ".fs");
 
     static int64_t last = bx::getHPCounter();
     static float time = 0.0f;
@@ -225,7 +193,7 @@ int main(int argc, char **argv)
             bgfx::setViewRect(kClearView, 0, 0, bgfx::BackbufferRatio::Equal);
         }
 
-
+        // set global uniforms
         {
             int64_t now = bx::getHPCounter();
             const int64_t frameTime = now - last;
@@ -238,59 +206,18 @@ int main(int argc, char **argv)
             m_uniforms.m_time = time;
         }
 
-
-        // This dummy draw call is here to make sure that view 0 is cleared if no other draw calls are submitted to view 0.
-        //bgfx::touch(kClearView);
-
-        // Use debug font to print information about this example.
-        // bgfx::dbgTextClear();
-        // bgfx::dbgTextImage(bx::max<uint16_t>(uint16_t(width / 2 / 8), 20) - 20, bx::max<uint16_t>(uint16_t(height / 2 / 16), 6) - 6, 40, 12, s_logo, 160);
-        // bgfx::dbgTextPrintf(0, 0, 0x0f, "Press F1 to toggle stats.");
-        // bgfx::dbgTextPrintf(0, 1, 0x0f, "Color can be changed with ANSI \x1b[9;me\x1b[10;ms\x1b[11;mc\x1b[12;ma\x1b[13;mp\x1b[14;me\x1b[0m code too.");
-        // bgfx::dbgTextPrintf(80, 1, 0x0f, "\x1b[;0m    \x1b[;1m    \x1b[; 2m    \x1b[; 3m    \x1b[; 4m    \x1b[; 5m    \x1b[; 6m    \x1b[; 7m    \x1b[0m");
-        // bgfx::dbgTextPrintf(80, 2, 0x0f, "\x1b[;8m    \x1b[;9m    \x1b[;10m    \x1b[;11m    \x1b[;12m    \x1b[;13m    \x1b[;14m    \x1b[;15m    \x1b[0m");
-
-        // const bgfx::Stats* stats = bgfx::getStats();
-        // bgfx::dbgTextPrintf(0, 2, 0x0f, "Backbuffer %dW x %dH in pixels, debug text %dW x %dH in characters.", stats->width, stats->height, stats->textWidth, stats->textHeight);
-
         // Enable stats or debug text.
         bgfx::setDebug(s_showStats ? BGFX_DEBUG_STATS : BGFX_DEBUG_NONE);
 
-        {
-            bgfx::setTexture(0, s_logo,  m_texture_logo);
-            bgfx::setTexture(1, s_dog,  m_texture_dog);
-            bgfx::setTexture(2, s_dog_mask,  m_texture_dog_mask);
-
-            m_uniforms.submit();
-
-            bgfx::setVertexBuffer(0, vbh);
-            bgfx::setIndexBuffer(ibh);
-
-            // Set render states.
-            bgfx::setState(state);
-
-            // Submit primitive for rendering to view 0.
-            bgfx::submit(0, program);
-            //bgfx::discard();
-        }
+        m_uniforms.submit();
+        active_program->submit();
 
         // Advance to next frame. Process submitted rendering primitives.
         bgfx::frame();
     }
 
-    bgfx::destroy(s_logo);
-    bgfx::destroy(m_texture_logo);
-
-    bgfx::destroy(s_dog);
-    bgfx::destroy(m_texture_dog);
-
-    bgfx::destroy(s_dog_mask);
-    bgfx::destroy(m_texture_dog_mask);
-
     m_uniforms.destroy();
-    bgfx::destroy(ibh);
-    bgfx::destroy(vbh);
-    bgfx::destroy(program);
+    active_program.reset();
 
     bgfx::shutdown();
     glfwTerminate();

@@ -163,7 +163,7 @@ int main(int argc, char **argv)
 
     init.resolution.width = (uint32_t)width;
     init.resolution.height = (uint32_t)height;
-    init.resolution.reset = BGFX_RESET_MSAA_X16 | BGFX_RESET_VSYNC; // BGFX_RESET_NONE, BGFX_RESET_MSAA_X16, BGFX_RESET_VSYNC
+    init.resolution.reset = BGFX_RESET_MSAA_X16; // BGFX_RESET_NONE, BGFX_RESET_MSAA_X16, BGFX_RESET_VSYNC
 
     if (!bgfx::init(init))
         return 1;
@@ -221,7 +221,7 @@ int main(int argc, char **argv)
         glfwGetWindowSize(window, &width, &height);
 
         if (width != oldWidth || height != oldHeight) {
-            bgfx::reset((uint32_t)width, (uint32_t)height, BGFX_RESET_VSYNC);
+            bgfx::reset((uint32_t)width, (uint32_t)height, init.resolution.reset);
             bgfx::setViewRect(kClearView, 0, 0, bgfx::BackbufferRatio::Equal);
         }
 

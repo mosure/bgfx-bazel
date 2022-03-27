@@ -70,7 +70,7 @@ public:
             bgfx::makeRef(planeTriList, sizeof(planeTriList))
         );
 
-        program_ = loadProgram(shader_name + ".vs", shader_name + ".fs");
+        program_ = loadProgram("program2d.vs", shader_name + ".fs");
     }
 
     ~Program2d() {

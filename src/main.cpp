@@ -69,11 +69,7 @@ struct Uniforms {
 
 
 static std::unique_ptr<example::Program> get_program(const std::string& program_name) {
-    if (program_name == "basic") {
-        return std::make_unique<example::Program2d>("basic");
-    } else if (program_name == "cubes") {
-        return std::make_unique<example::Program2d>("cubes");
-    } else if (program_name == "logo") {
+    if (program_name == "logo") {
         return std::make_unique<example::TextureProgram2d>(
             "logo",
             std::initializer_list<std::string>({ "s_logo" })
@@ -84,7 +80,7 @@ static std::unique_ptr<example::Program> get_program(const std::string& program_
             std::initializer_list<std::string>({ "s_dog", "s_dog_mask" })
         );
     } else {
-        throw std::runtime_error("Unknown program name: " + program_name);
+        return std::make_unique<example::Program2d>(program_name);
     }
 }
 
@@ -156,7 +152,7 @@ int main(int argc, char **argv)
 
     init.resolution.width = (uint32_t)width;
     init.resolution.height = (uint32_t)height;
-    init.resolution.reset = BGFX_RESET_MSAA_X16; // BGFX_RESET_NONE, BGFX_RESET_MSAA_X16, BGFX_RESET_VSYNC
+    init.resolution.reset = BGFX_RESET_MSAA_X16 | BGFX_RESET_VSYNC; // BGFX_RESET_NONE, BGFX_RESET_MSAA_X16, BGFX_RESET_VSYNC
 
     if (!bgfx::init(init))
         return 1;
@@ -192,7 +188,7 @@ int main(int argc, char **argv)
             bgfx::reset((uint32_t)width, (uint32_t)height, init.resolution.reset);
             bgfx::setViewRect(kClearView, 0, 0, bgfx::BackbufferRatio::Equal);
         }
-
+ 
         // set global uniforms
         {
             int64_t now = bx::getHPCounter();

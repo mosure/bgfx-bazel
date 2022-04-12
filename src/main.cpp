@@ -68,7 +68,7 @@ struct Uniforms {
 };
 
 
-static std::unique_ptr<example::Program> get_program(const std::string& program_name) {
+static std::unique_ptr<example::Program> get_program(const std::string& program_name, int width, int height) {
     if (program_name == "logo") {
         return std::make_unique<example::TextureProgram2d>(
             "logo",
@@ -79,6 +79,8 @@ static std::unique_ptr<example::Program> get_program(const std::string& program_
             "mask",
             std::initializer_list<std::string>({ "s_dog", "s_dog_mask" })
         );
+    } else if (program_name == "mesh") {
+        return std::make_unique<example::GLTFProgram>("models/cube/Cube.gltf", width, height, false);
     } else {
         return std::make_unique<example::Program2d>(program_name);
     }
@@ -171,7 +173,7 @@ int main(int argc, char **argv)
     example::PosVertex::init();
 
 
-    std::unique_ptr<example::Program> active_program = get_program(program_name);
+    std::unique_ptr<example::Program> active_program = get_program(program_name, width, height);
 
 
     static int64_t last = bx::getHPCounter();

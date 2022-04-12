@@ -1,11 +1,13 @@
 #pragma once
 
+#include <iostream>
 #include <initializer_list>
 #include <string.h>
 #include <vector>
 
 #include <bgfx/bgfx.h>
 
+#include "common/gltf.h"
 #include "common/utils.h"
 
 
@@ -66,7 +68,6 @@ public:
         );
 
         ibh_ = bgfx::createIndexBuffer(
-            // Static data can be passed with bgfx::makeRef
             bgfx::makeRef(planeTriList, sizeof(planeTriList))
         );
 
@@ -135,6 +136,60 @@ public:
         }
 
         Program2d::submit();
+    }
+};
+
+
+class GLTFProgram : public Program {
+protected:
+    bgfx::ProgramHandle program_;
+    GLTF gltf_;
+
+    int view_width_;
+    int view_height_;
+
+public:
+    GLTFProgram(
+        const std::string& filepath,
+        int view_width,
+        int view_height,
+        bool binary_glb = true
+    )
+        : gltf_(getFilepath(filepath), binary_glb)
+        , view_width_(view_width)
+        , view_height_(view_height)
+    {
+        gltf_.debug();
+    }
+
+    ~GLTFProgram() {
+
+    }
+
+    void submit() override {
+        const bx::Vec3 at  = { 0.0f, 1.0f,  0.0f };
+        const bx::Vec3 eye = { 0.0f, 1.0f, -2.5f };
+
+        // Set view and projection matrix for view 0.
+        {
+            float view[16];
+            bx::mtxLookAt(view, eye, at);
+
+            float proj[16];
+            bx::mtxProj(proj, 60.0f, float(view_width_)/float(view_height_), 0.1f, 100.0f, bgfx::getCaps()->homogeneousDepth);
+            bgfx::setViewTransform(0, view, proj);
+
+            // Set view 0 default viewport.
+            bgfx::setViewRect(0, 0, 0, uint16_t(view_width_), uint16_t(view_height_) );
+        }
+
+        // float mtx[16];
+        // bx::mtxRotateXY(mtx
+        //     , 0.0f
+        //     , time*0.37f
+        // );
+
+        // meshSubmit(m_mesh, 0, m_program, mtx);
     }
 };
 

@@ -48,3 +48,17 @@ new_git_repository(
     build_file = '@//:thirdparty/glfw.BUILD',
     commit = '0b9e48fa3df9c184ff1abfb2452fd1a4b696ecd8',
 )
+
+new_git_repository(
+    name = 'json',
+    remote = 'https://github.com/nlohmann/json.git',
+    tag = 'v3.10.5',
+    build_file = '@//:thirdparty/json.BUILD',
+)
+
+new_git_repository(
+    name = 'tinygltf',
+    remote = 'https://github.com/syoyo/tinygltf.git',
+    commit = '1a7c7d20013465b5c2a1285872b52a43ab62c1b3',
+    build_file = '@//:thirdparty/tinygltf.BUILD',
+)

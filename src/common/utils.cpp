@@ -47,7 +47,7 @@ static const bgfx::Memory* loadFile(const std::string& _filePath)
     return bgfx::makeRef(buffer.get(), size);
 }
 
-static const std::string getFilepath(const std::string& _from_resources) {
+const std::string getFilepath(const std::string& _from_resources) {
     std::string filepath = "../../../../../resources/" + _from_resources;
 
     return filepath;

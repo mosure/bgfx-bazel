@@ -25,6 +25,7 @@ cc_binary(
         '@argparse//:argparse',
         '@bgfx//:bgfx',
         '@glfw//:glfw',
+        '@tinygltf//:tinygltf',
     ],
     copts = [
         '-std=c++17',

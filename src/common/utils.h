@@ -10,6 +10,8 @@
 
 
 
+const std::string getFilepath(const std::string& _from_resources);
+
 bgfx::ShaderHandle loadShader(const std::string& _name);
 bgfx::ProgramHandle loadProgram(const std::string& _vsName, const std::string& _fsName);
 

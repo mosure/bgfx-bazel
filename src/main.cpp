@@ -7,6 +7,7 @@
 #include <argparse/argparse.hpp>
 
 #include <bx/bx.h>
+#include <bx/bounds.h>
 #include <bx/file.h>
 #include <bx/timer.h>
 #include <bgfx/bgfx.h>
@@ -21,6 +22,7 @@
 #endif
 #include <GLFW/glfw3native.h>
 
+#include "common/allocator.h"
 #include "common/program.h"
 
 
@@ -80,7 +82,7 @@ static std::unique_ptr<example::Program> get_program(const std::string& program_
             std::initializer_list<std::string>({ "s_dog", "s_dog_mask" })
         );
     } else if (program_name == "mesh") {
-        return std::make_unique<example::GLTFProgram>("models/cube/Cube.gltf", width, height, false);
+        return std::make_unique<example::MeshProgram>("models/bunny.bgfx.bin", width, height);
     } else {
         return std::make_unique<example::Program2d>(program_name);
     }
@@ -90,6 +92,8 @@ static std::unique_ptr<example::Program> get_program(const std::string& program_
 
 int main(int argc, char **argv)
 {
+    example::alloc_init();
+
     bool fullscreen = false;
     std::string program_name = "cubes";
 
@@ -208,7 +212,7 @@ int main(int argc, char **argv)
         bgfx::setDebug(s_showStats ? BGFX_DEBUG_STATS : BGFX_DEBUG_NONE);
 
         m_uniforms.submit();
-        active_program->submit();
+        active_program->submit(time);
 
         // Advance to next frame. Process submitted rendering primitives.
         bgfx::frame();

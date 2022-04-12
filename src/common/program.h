@@ -1,5 +1,6 @@
 #pragma once
 
+#include <exception>
 #include <iostream>
 #include <initializer_list>
 #include <string.h>
@@ -7,7 +8,7 @@
 
 #include <bgfx/bgfx.h>
 
-#include "common/gltf.h"
+#include "common/mesh.h"
 #include "common/utils.h"
 
 
@@ -47,7 +48,7 @@ class Program {
 public:
     virtual ~Program() = default;
 
-    virtual void submit() = 0;
+    virtual void submit(float time) = 0;
 
 };
 
@@ -80,7 +81,7 @@ public:
         bgfx::destroy(program_);
     }
 
-    void submit() override {
+    void submit(float time) override {
         uint64_t state = 0
                 | BGFX_STATE_WRITE_R
                 | BGFX_STATE_WRITE_G
@@ -130,44 +131,54 @@ public:
         }
     }
 
-    void submit() override {
+    void submit(float time) override {
         for (uint i = 0; i < textures_.size(); i++) {
             bgfx::setTexture(i, textures_[i].uniform, textures_[i].texture);
         }
 
-        Program2d::submit();
+        Program2d::submit(time);
     }
 };
 
 
-class GLTFProgram : public Program {
+class MeshProgram : public Program {
 protected:
+    Mesh* mesh_;
     bgfx::ProgramHandle program_;
-    GLTF gltf_;
 
     int view_width_;
     int view_height_;
 
 public:
-    GLTFProgram(
+    MeshProgram(
         const std::string& filepath,
         int view_width,
-        int view_height,
-        bool binary_glb = true
+        int view_height
     )
-        : gltf_(getFilepath(filepath), binary_glb)
-        , view_width_(view_width)
+        : view_width_(view_width)
         , view_height_(view_height)
     {
-        gltf_.debug();
+        program_ = loadProgram("mesh.vs", "mesh.fs");
+
+        mesh_ = meshLoad(getFilepath(filepath).c_str());
+        if (!mesh_) {
+            throw std::runtime_error("Failed to load mesh: " + getFilepath(filepath));
+        }
+
+        bgfx::setViewClear(0
+            , BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH
+            , 0x303030ff
+            , 1.0f
+            , 0
+        );
     }
 
-    ~GLTFProgram() {
-
+    ~MeshProgram() {
+        meshUnload(mesh_);
     }
 
-    void submit() override {
-        const bx::Vec3 at  = { 0.0f, 1.0f,  0.0f };
+    void submit(float time) override {
+        const bx::Vec3 at  = { 0.0f, 0.5f,  0.0f };
         const bx::Vec3 eye = { 0.0f, 1.0f, -2.5f };
 
         // Set view and projection matrix for view 0.
@@ -183,14 +194,14 @@ public:
             bgfx::setViewRect(0, 0, 0, uint16_t(view_width_), uint16_t(view_height_) );
         }
 
-        // float mtx[16];
-        // bx::mtxRotateXY(mtx
-        //     , 0.0f
-        //     , time*0.37f
-        // );
+        float mtx[16];
+        bx::mtxRotateXY(mtx
+            , 0.0f
+            , time * 0.37f
+        );
 
-        // meshSubmit(m_mesh, 0, m_program, mtx);
+        meshSubmit(mesh_, 0, program_, mtx);
     }
 };
 
-}; // namespace example
+} // namespace example

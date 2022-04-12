@@ -29,9 +29,20 @@ objc_library(
 )
 
 cc_library(
+    name = 'meshoptimizer',
+    srcs = glob([
+        '3rdparty/meshoptimizer/src/*.cpp',
+    ]),
+    hdrs = ['3rdparty/meshoptimizer/src/meshoptimizer.h'],
+    includes = ['3rdparty/meshoptimizer/src'],
+)
+
+cc_library(
     name = 'bgfx',
     srcs = glob(
-        ['src/*.cpp'],
+        [
+            'src/*.cpp',
+        ],
         exclude=['src/amalgamated.cpp'],
     ),
     hdrs = glob([
@@ -48,6 +59,7 @@ cc_library(
         '3rdparty/iqa/include',
     ],
     deps = [
+        ':meshoptimizer',
         '@bimg//:bimg',
         '@bx//:bx',
     ] + select({

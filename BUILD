@@ -18,6 +18,8 @@ cc_binary(
     name = 'example',
     srcs = [
         'src/main.cpp',
+        'src/common/allocator.cpp',
+        'src/common/mesh.cpp',
         'src/common/utils.cpp',
     ],
     deps = [

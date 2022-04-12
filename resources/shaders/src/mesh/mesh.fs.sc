@@ -5,7 +5,7 @@ $input v_pos, v_view, v_normal, v_color0
  * License: https://github.com/bkaradzic/bgfx/blob/master/LICENSE
  */
 
-#include "../common/common.sh"
+#include <bgfx_shader.sh>
 
 uniform vec4 u_times;
 #define u_delta_seconds u_times.x

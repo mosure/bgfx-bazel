@@ -10,10 +10,12 @@ cc_library(
     name = 'effects',
     hdrs = glob([
         'src/**/*.h',
-        ':shaders',
     ]),
     includes = [
         'src',
+    ],
+    deps = [
+        ':shaders',
     ],
 )
 
@@ -58,7 +60,6 @@ cc_binary(
     ],
 )
 
-# https://stackoverflow.com/questions/38905256/bazel-copy-multiple-files-to-binary-directory
 filegroup(
     name = 'tooling',
     srcs = select({
@@ -67,21 +68,6 @@ filegroup(
         '//conditions:default': ['tools/unix/shaderc'],
     }),
 )
-
-# py_binary(
-#     name = 'shaderc',
-#     srcs = ['tools/shaderc.py'],
-# )
-
-# genrule(
-#     name = 'shaders',
-#     srcs = glob([
-#         'resources/shaders/**/*.sc',
-#     ]),
-#     outs = ['shaders.hpp'],
-#     exec_tools = ['@bgfx//:bgfx_shader', ':shaderc', ':tooling'],
-#     cmd = '$(location :shaderc) $(OUTS) $(location @bgfx//:bgfx_shader) $(SRCS)'
-# )
 
 shader_sources(
     name = 'shaders',

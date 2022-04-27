@@ -11,6 +11,8 @@
 #include "common/mesh.h"
 #include "common/utils.h"
 
+#include "generated_shaders.hpp"
+
 
 namespace example {
 
@@ -72,7 +74,7 @@ public:
             bgfx::makeRef(planeTriList, sizeof(planeTriList))
         );
 
-        program_ = loadProgram("program2d.vs", shader_name + ".fs");
+        program_ = loadProgram(generated::shaders::vert::program2d, shader_name + ".fs");
     }
 
     ~Program2d() {
@@ -158,7 +160,7 @@ public:
         : view_width_(view_width)
         , view_height_(view_height)
     {
-        program_ = loadProgram("mesh.vs", "mesh.fs");
+        program_ = loadProgram(generated::shaders::vert::mesh, generated::shaders::frag::mesh);
 
         mesh_ = meshLoad(getFilepath(filepath).c_str());
         if (!mesh_) {

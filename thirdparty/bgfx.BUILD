@@ -74,3 +74,9 @@ cc_library(
     }),
     visibility = ['//visibility:public'],
 )
+
+filegroup(
+    name = 'bgfx_shader',
+    srcs = ['src/bgfx_shader.sh'],
+    visibility = ['//visibility:public'],
+)

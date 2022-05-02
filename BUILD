@@ -60,6 +60,44 @@ cc_binary(
     ],
 )
 
+cc_binary(
+    name = 'example-headless',
+    srcs = [
+        'src/main_headless.cpp',
+        'src/common/allocator.cpp',
+        'src/common/mesh.cpp',
+        'src/common/utils.cpp',
+    ],
+    deps = [
+        ':effects',
+        '@argparse//:argparse',
+        '@bgfx//:bgfx',
+    ],
+    copts = [
+        '-std=c++17',
+    ],
+    linkopts = select({
+        '@bazel_tools//src/conditions:darwin': [
+            '-F/Library/Frameworks',
+            '-framework QuartzCore',
+            '-framework Metal',
+            '-framework Cocoa',
+            '-framework IOKit',
+            '-framework CoreVideo',
+        ],
+        '//conditions:default': [
+            '-ldl',
+            '-lGL',
+            '-lpthread',
+            '-lX11',
+            '-lstdc++fs',
+        ],
+    }),
+    data = [
+        ":shaders",
+    ],
+)
+
 filegroup(
     name = 'tooling',
     srcs = select({

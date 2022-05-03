@@ -1,5 +1,6 @@
 #include <cstdint>
 #include <cstdlib>
+#include <fstream>
 #include <iostream>
 #include <memory>
 #include <stdio.h>
@@ -231,12 +232,16 @@ int main(int argc, char **argv)
     uint32_t available_frame = bgfx::readTexture(dst_texture, data_ptr);
     std::cout << "Texture read back content will be available at frame: " << available_frame << std::endl;
 
-    std::cout << *((uint8_t*)data_ptr) << std::endl;
+    std::cout << "First byte: " << *((uint8_t*)data_ptr) << std::endl;
 
     std::cout << "Current frame: " << bgfx::frame() << std::endl;
     std::cout << "Current frame: " << bgfx::frame() << std::endl;
 
-    std::cout << *((uint8_t*)data_ptr) << std::endl;
+    std::cout << "First byte: " << *((uint8_t*)data_ptr) << std::endl;
+
+    std::ofstream outfile("out.raw", std::ios::binary);
+    outfile.write((char*)data_ptr, tex_info.storageSize);
+    outfile.close();
 
 
     m_uniforms.destroy();

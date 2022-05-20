@@ -134,7 +134,7 @@ public:
     }
 
     void submit(float time) override {
-        for (uint i = 0; i < textures_.size(); i++) {
+        for (unsigned int i = 0; i < textures_.size(); i++) {
             bgfx::setTexture(i, textures_[i].uniform, textures_[i].texture);
         }
 
@@ -160,7 +160,7 @@ public:
         : view_width_(view_width)
         , view_height_(view_height)
     {
-        program_ = loadProgram(generated::shaders::vert::mesh, generated::shaders::frag::mesh);
+        program_ = loadProgram(generated::shaders::vert::mesh::mesh, generated::shaders::frag::mesh::mesh);
 
         mesh_ = meshLoad(getFilepath(filepath).c_str());
         if (!mesh_) {

@@ -31,6 +31,9 @@ cc_library(
         '3rdparty/**/*.h',
     ]) + select({
         '@bazel_tools//src/conditions:darwin': ['include/compat/osx/malloc.h'],
+        '@bazel_tools//src/conditions:windows': glob([
+            'include/compat/msvc/*.h',
+        ]),
         '//conditions:default': [],
     }),
     includes = [
@@ -38,14 +41,14 @@ cc_library(
         '3rdparty',
     ] + select({
         '@bazel_tools//src/conditions:darwin': ['include/compat/osx'],
+        '@bazel_tools//src/conditions:windows': [
+            'include/compat/msvc',
+        ],
         '//conditions:default': [],
     }),
     defines = [
         '__STDC_FORMAT_MACROS',
         'BX_CONFIG_DEBUG=0',
-    ],
-    copts = [
-        '-std=c++17',
     ],
     visibility = ['//visibility:public'],
 )

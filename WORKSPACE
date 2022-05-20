@@ -7,7 +7,7 @@ load('@bazel_tools//tools/build_defs/repo:git.bzl', 'git_repository', 'new_git_r
 git_repository(
     name = 'astc_codec',
     remote = 'https://github.com/google/astc-codec.git',
-    branch = 'master',
+    commit = '585aea744da3cb0beb07f0401982e2ace4285815',
 )
 
 

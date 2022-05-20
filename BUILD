@@ -17,6 +17,12 @@ cc_library(
     deps = [
         ':shaders',
     ],
+    copts = select({
+        '@bazel_tools//src/conditions:windows': [
+            '/std:c++17',
+        ],
+        '//conditions:default': [],
+    }),
 )
 
 
@@ -35,29 +41,15 @@ cc_binary(
         '@glfw//:glfw',
         '@tinygltf//:tinygltf',
     ],
-    copts = [
-        '-std=c++17',
-    ],
-    linkopts = select({
-        '@bazel_tools//src/conditions:darwin': [
-            '-F/Library/Frameworks',
-            '-framework QuartzCore',
-            '-framework Metal',
-            '-framework Cocoa',
-            '-framework IOKit',
-            '-framework CoreVideo',
-        ],
-        '//conditions:default': [
-            '-ldl',
-            '-lGL',
-            '-lpthread',
-            '-lX11',
-            '-lstdc++fs',
-        ],
-    }),
     data = [
         ":shaders",
     ],
+    copts = select({
+        '@bazel_tools//src/conditions:windows': [
+            '/std:c++17',
+        ],
+        '//conditions:default': [],
+    }),
 )
 
 cc_binary(
@@ -73,36 +65,22 @@ cc_binary(
         '@argparse//:argparse',
         '@bgfx//:bgfx',
     ],
-    copts = [
-        '-std=c++17',
-    ],
-    linkopts = select({
-        '@bazel_tools//src/conditions:darwin': [
-            '-F/Library/Frameworks',
-            '-framework QuartzCore',
-            '-framework Metal',
-            '-framework Cocoa',
-            '-framework IOKit',
-            '-framework CoreVideo',
-        ],
-        '//conditions:default': [
-            '-ldl',
-            '-lGL',
-            '-lpthread',
-            '-lX11',
-            '-lstdc++fs',
-        ],
-    }),
     data = [
         ":shaders",
     ],
+    copts = select({
+        '@bazel_tools//src/conditions:windows': [
+            '/std:c++17',
+        ],
+        '//conditions:default': [],
+    }),
 )
 
 filegroup(
     name = 'tooling',
     srcs = select({
         '@bazel_tools//src/conditions:darwin': ['tools/darwin/shaderc'],
-        '@bazel_tools//src/conditions:windows': ['tools/windows/shaderc'],
+        '@bazel_tools//src/conditions:windows': ['tools/windows/shaderc.exe'],
         '//conditions:default': ['tools/unix/shaderc'],
     }),
 )

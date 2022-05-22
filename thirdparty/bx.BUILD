@@ -50,5 +50,13 @@ cc_library(
         '__STDC_FORMAT_MACROS',
         'BX_CONFIG_DEBUG=0',
     ],
+    copts = select({
+        '@bazel_tools//src/conditions:windows': [
+            '/std:c++17',
+        ],
+        '//conditions:default': [
+            '-std=c++17'
+        ],
+    }),
     visibility = ['//visibility:public'],
 )

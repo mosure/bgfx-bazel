@@ -26,7 +26,9 @@ cc_library(
         '@bazel_tools//src/conditions:windows': [
             '/std:c++17',
         ],
-        '//conditions:default': [],
+        '//conditions:default': [
+            '-std=c++17'
+        ],
     }),
 )
 
@@ -63,14 +65,13 @@ cc_binary(
             '-lstdc++fs',
         ],
     }),
-    data = [
-        ":shaders",
-    ],
     copts = select({
         '@bazel_tools//src/conditions:windows': [
             '/std:c++17',
         ],
-        '//conditions:default': [],
+        '//conditions:default': [
+            '-std=c++17'
+        ],
     }),
 )
 
@@ -104,14 +105,13 @@ cc_binary(
             '-lstdc++fs',
         ],
     }),
-    data = [
-        ":shaders",
-    ],
     copts = select({
         '@bazel_tools//src/conditions:windows': [
             '/std:c++17',
         ],
-        '//conditions:default': [],
+        '//conditions:default': [
+            '-std=c++17'
+        ],
     }),
 )
 

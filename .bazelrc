@@ -2,7 +2,6 @@ build:windows --copt="/std:c++17" --copt="/W4" --copt="/O2"
 build:linux --copt="-std=c++17" --copt="-O3"
 build:macos --copt="-std=c++17" --copt="-O3"
 
-
 build:darwin --remote_http_cache=https://bazel-cache.da-ext.net
 build:linux --remote_http_cache=https://bazel-cache.da-ext.net/ubuntu_20_04
 

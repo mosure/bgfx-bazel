@@ -98,7 +98,7 @@ bgfx::ProgramHandle loadProgram(const std::string& _vsName, const std::string& _
 
 bgfx::TextureHandle loadTexture(const std::string& _name, uint64_t _flags, uint8_t _skip, bgfx::TextureInfo* _info, bimg::Orientation::Enum* _orientation)
 {
-    std::string filepath = getFilepath("textures/bin/" + _name + ".dds");
+    std::string filepath = getFilepath("textures/" + _name + ".dds");
 
     auto data_mem = loadFile(filepath);
     return bgfx::createTexture(

@@ -3,6 +3,10 @@ load(
     '//:tools/shaderc.bzl',
     'shader_sources',
 )
+load(
+    '//:tools/texturec.bzl',
+    'texture_sources',
+)
 
 
 
@@ -16,6 +20,7 @@ cc_library(
     ],
     deps = [
         ':shaders',
+        ':textures',
     ],
 )
 
@@ -55,9 +60,6 @@ cc_binary(
             '-lstdc++fs',
         ],
     }),
-    data = [
-        ":shaders",
-    ],
 )
 
 cc_binary(
@@ -93,17 +95,23 @@ cc_binary(
             '-lstdc++fs',
         ],
     }),
-    data = [
-        ":shaders",
-    ],
 )
 
 filegroup(
-    name = 'tooling',
+    name = 'shaderc',
     srcs = select({
         '@bazel_tools//src/conditions:darwin': ['tools/darwin/shaderc'],
         '@bazel_tools//src/conditions:windows': ['tools/windows/shaderc'],
         '//conditions:default': ['tools/unix/shaderc'],
+    }),
+)
+
+filegroup(
+    name = 'texturec',
+    srcs = select({
+        '@bazel_tools//src/conditions:darwin': ['tools/darwin/texturec'],
+        '@bazel_tools//src/conditions:windows': ['tools/windows/texturec'],
+        '//conditions:default': ['tools/unix/texturec'],
     }),
 )
 
@@ -112,6 +120,14 @@ shader_sources(
     shaders = glob([
         'resources/shaders/**/*.sc',
     ]),
-    tooling = '//:tooling',
+    tooling = '//:shaderc',
     bgfx_shader = '@bgfx//:bgfx_shader',
+)
+
+texture_sources(
+    name = 'textures',
+    images = glob([
+        'resources/textures/**/*.png',
+    ]),
+    tooling = '//:texturec',
 )

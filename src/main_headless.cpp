@@ -19,6 +19,8 @@
 #include "common/allocator.h"
 #include "common/program.h"
 
+#include "generated_textures.hpp"
+
 
 static bool s_showStats = false;
 
@@ -53,13 +55,16 @@ struct Uniforms {
 static std::unique_ptr<example::Program> get_program(const std::string& program_name, int width, int height) {
     if (program_name == "logo") {
         return std::make_unique<example::TextureProgram2d>(
-            "logo",
-            std::initializer_list<std::string>({ "s_logo" })
+            generated::shaders::frag::logo,
+            std::initializer_list<std::string>({ generated::textures::s_logo })
         );
     } else if (program_name == "mask") {
         return std::make_unique<example::TextureProgram2d>(
-            "mask",
-            std::initializer_list<std::string>({ "s_dog", "s_dog_mask" })
+            generated::shaders::frag::mask,
+            std::initializer_list<std::string>({
+                generated::textures::s_dog,
+                generated::textures::s_dog_mask
+            })
         );
     } else if (program_name == "mesh") {
         return std::make_unique<example::MeshProgram>("models/bunny.bgfx.bin", width, height);
@@ -74,7 +79,7 @@ int main(int argc, char **argv)
 {
     example::alloc_init();
 
-    std::string program_name = "cubes";
+    std::string program_name = generated::shaders::frag::cubes;
 
     argparse::ArgumentParser args_program("example", "1.0.0");
     args_program.add_argument("-f", "--fullscreen")
@@ -83,7 +88,7 @@ int main(int argc, char **argv)
         .implicit_value(true);
 
     args_program.add_argument("-p", "--program")
-        .default_value(std::string("cubes"))
+        .default_value(std::string(generated::shaders::frag::cubes))
         .help("name of program to run");
 
     try {

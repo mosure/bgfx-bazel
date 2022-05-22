@@ -22,6 +22,12 @@ cc_library(
         ':shaders',
         ':textures',
     ],
+    copts = select({
+        '@bazel_tools//src/conditions:windows': [
+            '/std:c++17',
+        ],
+        '//conditions:default': [],
+    }),
 )
 
 
@@ -40,9 +46,6 @@ cc_binary(
         '@glfw//:glfw',
         '@tinygltf//:tinygltf',
     ],
-    copts = [
-        '-std=c++17',
-    ],
     linkopts = select({
         '@bazel_tools//src/conditions:darwin': [
             '-F/Library/Frameworks',
@@ -59,6 +62,15 @@ cc_binary(
             '-lX11',
             '-lstdc++fs',
         ],
+    }),
+    data = [
+        ":shaders",
+    ],
+    copts = select({
+        '@bazel_tools//src/conditions:windows': [
+            '/std:c++17',
+        ],
+        '//conditions:default': [],
     }),
 )
 
@@ -75,9 +87,6 @@ cc_binary(
         '@argparse//:argparse',
         '@bgfx//:bgfx',
     ],
-    copts = [
-        '-std=c++17',
-    ],
     linkopts = select({
         '@bazel_tools//src/conditions:darwin': [
             '-F/Library/Frameworks',
@@ -95,13 +104,22 @@ cc_binary(
             '-lstdc++fs',
         ],
     }),
+    data = [
+        ":shaders",
+    ],
+    copts = select({
+        '@bazel_tools//src/conditions:windows': [
+            '/std:c++17',
+        ],
+        '//conditions:default': [],
+    }),
 )
 
 filegroup(
     name = 'shaderc',
     srcs = select({
         '@bazel_tools//src/conditions:darwin': ['tools/darwin/shaderc'],
-        '@bazel_tools//src/conditions:windows': ['tools/windows/shaderc'],
+        '@bazel_tools//src/conditions:windows': ['tools/windows/shaderc.exe'],
         '//conditions:default': ['tools/unix/shaderc'],
     }),
 )

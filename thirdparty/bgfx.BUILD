@@ -72,6 +72,33 @@ cc_library(
         ],
         '//conditions:default': [],
     }),
+    linkopts = select({
+        '@bazel_tools//src/conditions:darwin': [
+            '-F/Library/Frameworks',
+            '-framework QuartzCore',
+            '-framework Metal',
+            '-framework Cocoa',
+            '-framework IOKit',
+            '-framework CoreVideo',
+        ],
+        '@bazel_tools//src/conditions:windows': [
+            '-DEFAULTLIB:gdi32.lib',
+            '-DEFAULTLIB:user32.lib',
+            '-DEFAULTLIB:kernel32.lib',
+            '-DEFAULTLIB:psapi.lib',
+            '-DEFAULTLIB:d3d9.lib',
+            '-DEFAULTLIB:d3d11.lib',
+            '-DEFAULTLIB:d3d12.lib',
+            '-DEFAULTLIB:dxgi.lib',
+        ],
+        '//conditions:default': [
+            '-ldl',
+            '-lGL',
+            '-lpthread',
+            '-lX11',
+            '-lstdc++fs',
+        ],
+    }),
     visibility = ['//visibility:public'],
 )
 

@@ -134,7 +134,7 @@ public:
     }
 
     void submit(float time) override {
-        for (uint i = 0; i < textures_.size(); i++) {
+        for (unsigned int i = 0; i < textures_.size(); i++) {
             bgfx::setTexture(i, textures_[i].uniform, textures_[i].texture);
         }
 

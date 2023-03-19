@@ -14,7 +14,10 @@ objc_library(
         'src/osmesa_context.h',
         'src/nsgl_context.h',
         'src/cocoa_*.h',
-        'src/posix_thread.h',
+        'src/null_joystick.h',
+        'src/null_platform.h',
+        'src/platform.h',
+        'src/posix_*.h',
     ]),
     includes = [
         'include',
@@ -30,13 +33,18 @@ cc_library(
         'src/init.c',
         'src/input.c',
         'src/monitor.c',
+        'src/null_init.c',
+        'src/null_joystick.c',
+        'src/null_monitor.c',
+        'src/null_window.c',
         'src/osmesa_context.c',
+        'src/platform.c',
         'src/vulkan.c',
         'src/window.c',
     ]) + select({
         '@bazel_tools//src/conditions:darwin': glob([
             'src/cocoa_*.c',
-            'src/posix_thread.c',
+            'src/posix*.c',
         ]),
         '@bazel_tools//src/conditions:windows': glob([
             'src/win32_*.c',
@@ -55,11 +63,14 @@ cc_library(
         'src/egl_context.h',
         'src/internal.h',
         'src/mappings.h',
+        'src/null_joystick.h',
+        'src/null_platform.h',
         'src/osmesa_context.h',
+        'src/platform.h',
     ]) + select({
         '@bazel_tools//src/conditions:darwin': glob([
             'src/cocoa_*.h',
-            'src/posix_thread.h',
+            'src/posix_*.h',
         ]),
         '@bazel_tools//src/conditions:windows': glob([
             'src/win32_*.h',

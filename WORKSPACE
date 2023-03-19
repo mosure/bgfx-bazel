@@ -46,7 +46,7 @@ new_git_repository(
     name = 'glfw',
     remote = 'https://github.com/glfw/glfw.git',
     build_file = '@//:thirdparty/glfw.BUILD',
-    commit = '0b9e48fa3df9c184ff1abfb2452fd1a4b696ecd8',
+    commit = '9a87635686c7fcb63ca63149c5b179b85a53a725',
 )
 
 new_git_repository(
